@@ -24,7 +24,6 @@ var parseJSON = function(json) {
     }
 
     var ret; // Return value built by string, array or object quasi-literal
-
     // String literal
     if (token === '"') {
       ret = '';
@@ -44,7 +43,6 @@ var parseJSON = function(json) {
       }
       throw new SyntaxError('Unterminated string literal "...');
     }
-
     // Array literal
     if (token === '[') {
       ret = [];
@@ -57,7 +55,6 @@ var parseJSON = function(json) {
       }
       throw new SyntaxError('Unterminated array literal [...');
     }
-
     // Object literal
     if (token === '{') {
       ret = {};
@@ -75,7 +72,6 @@ var parseJSON = function(json) {
       }
       throw new SyntaxError('Unterminated object literal {...');
     }
-
     // Anything else
     throw new SyntaxError('Unknown JSON literal: '+token);
   };
