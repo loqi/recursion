@@ -6,16 +6,16 @@
 
 
 var getElementsByClassName = function(className){
-  return accumulateElementsByClassName(className);
-};
 
-var accumulateElementsByClassName = function(className, thisDomNode, accumA) {
-  thisDomNode = thisDomNode || document.body;
-  accumA = accumA || [];
-  if (( new RegExp('^|\s+'+className+'\s+|$') ).exec(thisDomNode.className))
-        accumA.push(thisDomNode);
-  var childA = thisDomNode.children;
-  for (var i = 0 ; i < childA.length ; i++)
-        accumulateElementsByClassName(className, childA[i], accumA);
-  return accumA;
+  var accumulateElementsByClassName = function(classNameS, thisDomNode, accumA) {
+    thisDomNode = thisDomNode || document.body;
+    accumA = accumA || [];
+    classNameR = (classNameS && classNameS.length > 0) ? new RegExp('(^|\\s+)'+classNameS+'(\\s+|$)') : /.?/;
+    if (classNameR.test(thisDomNode.className))   accumA.push(thisDomNode);
+    var childA = thisDomNode.children;
+    for (var i = 0 ; i < childA.length ; i++)   accumulateElementsByClassName(classNameS, childA[i], accumA);
+    return accumA;
+  };
+
+  return accumulateElementsByClassName(className);
 };
