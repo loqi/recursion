@@ -80,7 +80,7 @@ var parseJSON = function(json) {
     throw new SyntaxError('Unknown JSON literal: '+token);
   };
 
-  if (/^\s*$/.test(json)) return; // FIXME: All whitespace resolves to undefined. Is this right?
+  if (/^\s*$/.test(json)) return; // FIXME: A tokenless string resolves to undefined value. Is this correct behavior?
   builtObj = nextSrcValue();
   if (src.trimLeft().length > 0) throw new SyntaxError('Orphan trailing characters: '+src.trimLeft());
   return builtObj;
