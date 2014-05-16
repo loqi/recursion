@@ -16,5 +16,4 @@ var stringifyJSON = function(obj) {
   }
   for (var key in obj)   retCat(stringifyJSON(key)+':', stringifyJSON(obj[key]));
   return '{' + ret + '}';
-
 };
