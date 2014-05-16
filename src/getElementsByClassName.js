@@ -1,5 +1,4 @@
 var getElementsByClassName = function(className){
-
   var accumulateElementsByClassName = function(classNameS, thisDomNode, accumA) {
     thisDomNode = thisDomNode || document.body;
     accumA = accumA || [];
@@ -9,6 +8,5 @@ var getElementsByClassName = function(className){
     for (var i = 0 ; i < childA.length ; i++)   accumulateElementsByClassName(classNameS, childA[i], accumA);
     return accumA;
   };
-
   return accumulateElementsByClassName(className);
 };
