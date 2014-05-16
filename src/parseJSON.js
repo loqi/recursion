@@ -33,7 +33,7 @@ var parseJSON = function(json) {
       }
       throw new SyntaxError('Unterminated string literal "...');
     }
-    // Array literal
+    // Array quasi-literal
     if (token === '[') {
       var retA = [];
       while (src.length > 0) {
@@ -43,7 +43,7 @@ var parseJSON = function(json) {
       }
       throw new SyntaxError('Unterminated array literal [...');
     }
-    // Object literal
+    // Object quasi-literal
     if (token === '{') {
       var retOb = {};
       while (src.length > 0) {
@@ -56,12 +56,11 @@ var parseJSON = function(json) {
       }
       throw new SyntaxError('Unterminated object literal {...');
     }
-    // Anything else
     throw new SyntaxError('Unknown JSON literal: '+token);
   };
 
-  if (/^\s*$/.test(json)) return;   // FIXME: A tokenless string resolves to undefined value. Is this correct behavior?
-  builtObj = nextLiteral();         // Recursively operates on `src` which is initialized to the `jsan` parameter.
+  if (/^\s*$/.test(json)) return;     // FIXME: A tokenless string resolves to undefined value. Is this correct behavior?
+  builtObj = nextLiteral();           // Recursively eats up `src` which is initialized to `json` parameter.
   if (/\S/.test(src)) throw new SyntaxError('Orphan trailing characters: '+src.trim());
   return builtObj;
 };
