@@ -50,8 +50,5 @@ var parseJSON = function(json) {
     throw new SyntaxError('Unknown JSON literal: '+token);
   };
 
-  if (/^\s*$/.test(json)) return;     // FIXME: A tokenless string resolves to undefined value. Is this correct behavior?
-  builtObj = nextLiteral();           // Recursively eats up `src` which is initialized to `json` parameter.
-  if (/\S/.test(src)) throw new SyntaxError('Orphan trailing characters: '+src.trim());
-  return builtObj;
+  return (/^\s*$/.test(json)) ? void 0 : nextLiteral(); // JS value represented by the first JSON literal, ignoring leftovers.
 };
