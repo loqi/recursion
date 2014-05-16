@@ -20,40 +20,39 @@ var parseJSON = function(json) {
       if (token === 'false') return false;
       throw new SyntaxError('Unknown keyword: '+token);
     }
-    var ret; // Return value built by string, array or object quasi-literal
     // String literal
     if (token === '"') {
-      ret = '';
+      var str = '';
       while (src.length > 0) {
-        if (eatRex(/^[^"\\]*/)) ret += reA[0]; // 0 or more chars up to not including '"' or '\' or EOS
+        if (eatRex(/^[^"\\]*/)) str += reA[0]; // 0 or more chars up to not including '"' or '\' or EOS
         if (src.length < 1) break;                                         // ran out of string before terminating quote
-        if (eatRex(/^\"/)) return ret;                                     // treminating quote character
+        if (eatRex(/^\"/)) return str;                                     // treminating quote character
         if (!eatRex(/^\\(.)/)) throw new SyntaxError('Empty character escape sequence at end of string -- "... \\"');
-        if (reA[1] !== 'u') { ret += escCodeTable[reA[1]] || reA[1] ; continue; }
+        if (reA[1] !== 'u') { str += escCodeTable[reA[1]] || reA[1] ; continue; }
         if (!eatRex(/^[0-9a-fA-F]{1,4}/)) throw new SyntaxError('Character escape \\u requires four trailing hexadecimal digits.');
-        ret += String.fromCharCode('0x'+reA[0]);
+        str += String.fromCharCode('0x'+reA[0]);
       }
       throw new SyntaxError('Unterminated string literal "...');
     }
     // Array literal
     if (token === '[') {
-      ret = [];
+      var arr = [];
       while (src.length > 0) {
-        if (eatRex(/^\s*\]/)) return ret;
-        ret.push(nextSrcValue());
+        if (eatRex(/^\s*\]/)) return arr;
+        arr.push(nextSrcValue());
         eatRex(/^\s*,/);              // Commas are optional. Postel's law.
       }
       throw new SyntaxError('Unterminated array literal [...');
     }
     // Object literal
     if (token === '{') {
-      ret = {};
+      var obj = {};
       while (src.length > 0) {
-        if (eatRex(/^(\s*\})/)) return ret;
+        if (eatRex(/^(\s*\})/)) return obj;
         var key = nextSrcValue();
         if (!isString(key)) throw new SyntaxError('Object key must be a string value -- string: anything');
         if (!eatRex(/^\s*:/)) throw new SyntaxError('Object literal requires colon between key and value -- key:value');
-        ret[key] = nextSrcValue();    // A repeated key overwrites its predicessor.
+        obj[key] = nextSrcValue();    // A repeated key overwrites its predicessor.
         eatRex(/^\s*,/);              // Commas are optional. Postel's Law.
       }
       throw new SyntaxError('Unterminated object literal {...');
