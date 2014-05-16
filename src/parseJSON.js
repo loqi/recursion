@@ -6,14 +6,14 @@ var parseJSON = function(json) {
   var eatRex = function(rex) { reA = rex.exec(src); if(reA){src=src.slice(reA[0].length)} return !!reA; };
   var nextLiteral = function() { // [Recursively] eats the leftmost [compound] literal value from `src`.
     token = eatRex(/^\s*(([+-]?\d*\.?\d+([eE][-+]?\d+)?)|\w+|\"|\[|\{)/) && reA[1] || ''; // numeric or keyword or '"' or '[' or '{' or ''
-    if (/^[+-\d.]/.test(token)) return +token; // Numeric literal
-    if (/^\w/.test(token)) { // Keyword literal
+    if (/^[+-\d.]/.test(token)) return +token; // ############ NUMERIC LITERAL
+    if (/^\w/.test(token)) { // ############################## KEYWORD LITERAL
       if (token === 'null') return null;
       if (token === 'true') return true;
       if (token === 'false') return false;
       throw new SyntaxError('Unknown keyword: '+token);
     }
-    if (token === '"') { // String literal
+    if (token === '"') { // ################################### STRING LITERAL
       var retS = '';
       while (src.length > 0) {
         if (eatRex(/^[^"\\]*/)) retS += reA[0]; // 0 or more chars up to not including '"' or '\' or EOS
@@ -26,7 +26,7 @@ var parseJSON = function(json) {
       }
       throw new SyntaxError('Unterminated string literal "...');
     }
-    if (token === '[') { // Array quasi-literal
+    if (token === '[') { // ############################## ARRAY QUASI-LITERAL
       var retA = [];
       while (src.length > 0) {
         if (eatRex(/^\s*\]/)) return retA;
@@ -35,7 +35,7 @@ var parseJSON = function(json) {
       }
       throw new SyntaxError('Unterminated array literal [...');
     }
-    if (token === '{') { // Object quasi-literal
+    if (token === '{') { // ############################# OBJECT QUASI-LITERAL
       var retOb = {};
       while (src.length > 0) {
         if (eatRex(/^(\s*\})/)) return retOb;
@@ -47,7 +47,7 @@ var parseJSON = function(json) {
       }
       throw new SyntaxError('Unterminated object literal {...');
     }
-    throw new SyntaxError('Unknown JSON literal: '+token);
+    throw new SyntaxError('Unknown JSON literal: '+token); // ########## OTHER
   };
 
   return (/^\s*$/.test(json)) ? void 0 : nextLiteral(); // JS value represented by the first JSON literal, ignoring leftovers.
