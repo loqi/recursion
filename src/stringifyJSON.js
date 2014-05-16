@@ -10,8 +10,8 @@ var stringifyJSON = function(obj) {
   if (typeof obj === 'boolean') return obj.toString();
   if (typeof obj === 'number') return obj.toString();
 
-  var ret = '';
-  var sep = '';
+  var ret = '';   // "Return value" - string progressively lengthened by concatenation.
+  var sep = '';   // "separator" - goes between `ret` and next element. Becomes ',' after first time.
   function retCat(leftS, rightS) { if(rightS.length>0){ret += sep+leftS+rightS ; sep=',';} }
 
   if (Array.isArray(obj)) {
