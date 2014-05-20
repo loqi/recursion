@@ -3,9 +3,9 @@ var parseJSON = function(json) {
   var escCodeTable = { 'b':'\b' , 'f':'\f' , 'n':'\n' , 'r':'\r' , 't':'\t' }; // \uHHHH is hardcoded.
   var isString = function(val) { return typeof val == 'string' || val instanceof String; };
   var reA; // "regex exec array"; Contains the result from the most recent regex .exec() call.
-  var eatRex = function(rex) { reA = rex.exec(src); if(reA){src=src.slice(reA[0].length)} return !!reA; };
+  var eatSrc = function(rex) { reA = rex.exec(src); if(reA){src=src.slice(reA[0].length)} return !!reA; };
   var nextLiteral = function() { // [Recursively] eats the leftmost [compound] literal value from `src`.
-    token = eatRex(/^\s*(([+-]?\d*\.?\d+([eE][-+]?\d+)?)|\w+|\"|\[|\{)/) && reA[1] || ''; // numeric or keyword or '"' or '[' or '{' or ''
+    token = eatSrc(/^\s*(([+-]?\d*\.?\d+([eE][-+]?\d+)?)|\w+|\"|\[|\{)/) && reA[1] || ''; // numeric or keyword or '"' or '[' or '{' or ''
     if (/^[+-\d.]/.test(token)) return +token;  //############ NUMERIC LITERAL
     if (/^\w/.test(token)) {                    //############ KEYWORD LITERAL
       if (token === 'null') return null;
@@ -16,34 +16,34 @@ var parseJSON = function(json) {
     if (token === '"') {                        //############ STRING LITERAL
       var retS = '';
       while (src.length > 0) {
-        if (eatRex(/^[^"\\]*/)) retS += reA[0];
+        if (eatSrc(/^[^"\\]*/)) retS += reA[0];
         if (src.length < 1) break;
-        if (eatRex(/^\"/)) return retS; // After passing this line, the next char must be '\' 
-        if (!eatRex(/^\\(.)/)) throw new SyntaxError('Empty character escape sequence at end of string -- "... \\"');
+        if (eatSrc(/^\"/)) return retS; // After passing this line, the next char must be '\'
+        if (!eatSrc(/^\\(.)/)) throw new SyntaxError('Empty character escape sequence at end of string -- "... \\"');
         if (reA[1] !== 'u') { retS += escCodeTable[reA[1]] || reA[1] ; continue; }
-        if (!eatRex(/^[0-9a-fA-F]{1,4}/)) throw new SyntaxError('Escape sequence \\u requires four trailing hexadecimal digits.');
+        if (!eatSrc(/^[0-9a-fA-F]{1,4}/)) throw new SyntaxError('Escape sequence \\u requires four trailing hexadecimal digits.');
         retS += String.fromCharCode('0x'+reA[0]);
       }
       throw new SyntaxError('Unterminated string literal "...');
     }
     if (token === '[') {                        //########## ARRAY LITERAL
       var retA = [];
-      while (src.length > 0) {
-        if (eatRex(/^\s*\]/)) return retA;
+      while (eatSrc(/^\s*/) , src.length > 0) {
+        if (eatSrc(/^\]/)) return retA;
         retA.push(nextLiteral());
-        eatRex(/^\s*,?\s*/);
+        eatSrc(/^\s*,/); // [1 2]ok; [1,2,]ok; [,1]err; [1,,2]err.
       }
       throw new SyntaxError('Unterminated array literal [...');
     }
     if (token === '{') {                        //############ OBJECT LITERAL
       var retOb = {};
-      while (src.length > 0) {
-        if (eatRex(/^\s*\}/)) return retOb;
+      while (eatSrc(/^\s*/) , src.length > 0) {
+        if (eatSrc(/^\}/)) return retOb;
         var key = nextLiteral();
         if (!isString(key)) throw new SyntaxError('Object key must be a string value -- string: anything');
-        if (!eatRex(/^\s*:/)) throw new SyntaxError('Object literal requires colon between key and value -- key:value');
+        if (!eatSrc(/^\s*:/)) throw new SyntaxError('Object literal requires colon between key and value -- key:value');
         retOb[key] = nextLiteral(); // A repeated key overwrites the predecessor.
-        eatRex(/^\s*,?\s*/);
+        eatSrc(/^\s*,/);
       }
       throw new SyntaxError('Unterminated object literal {...');
     }
