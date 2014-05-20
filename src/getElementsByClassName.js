@@ -1,6 +1,6 @@
 var getElementsByClassName = function(className, thisDomNode, accumA) {
   classRex = className instanceof RegExp ? className :
-      ( (className === '') ? /.?/ : new RegExp('(^|\\s+)'+className+'(\\s+|$)') );
+      ( className === '' ? /.?/ : new RegExp('(^|\\s+)'+className+'(\\s+|$)') );
   thisDomNode = thisDomNode || document.body;
   accumA = accumA || [];
   if (classRex.test(thisDomNode.className))  accumA.push(thisDomNode);
