@@ -31,7 +31,7 @@ var parseJSON = function(json) {
       while (src.length > 0) {
         if (eatRex(/^\s*\]/)) return retA;
         retA.push(nextLiteral());
-        eatRex(/^\s*,?/);
+        eatRex(/^\s*,?\s*/);
       }
       throw new SyntaxError('Unterminated array literal [...');
     }
@@ -43,7 +43,7 @@ var parseJSON = function(json) {
         if (!isString(key)) throw new SyntaxError('Object key must be a string value -- string: anything');
         if (!eatRex(/^\s*:/)) throw new SyntaxError('Object literal requires colon between key and value -- key:value');
         retOb[key] = nextLiteral(); // A repeated key overwrites the predecessor.
-        eatRex(/^\s*,?/);
+        eatRex(/^\s*,?\s*/);
       }
       throw new SyntaxError('Unterminated object literal {...');
     }
