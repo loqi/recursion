@@ -31,7 +31,7 @@ var parseJSON = function(json) {
       while (eatSrc(/^\s*/) , src.length > 0) {
         if (eatSrc(/^\]/)) return retA;
         retA.push(nextLiteral());
-        eatSrc(/^\s*,/); // [1 2]ok; [1,2,]ok; [,1]err; [1,,2]err.
+        eatSrc(/^\s*,/); // [1 2]ok  [1,2,]ok  [,1]err  [1,,2]err
       }
       throw new SyntaxError('Unterminated array literal [...');
     }
