@@ -18,7 +18,7 @@ var parseJSON = function(json) {
       while (src.length > 0) {
         if (eatRex(/^[^"\\]*/)) retS += reA[0];
         if (src.length < 1) break;
-        if (eatRex(/^\"/)) return retS;
+        if (eatRex(/^\"/)) return retS; // After passing this line, the next char must be '\' 
         if (!eatRex(/^\\(.)/)) throw new SyntaxError('Empty character escape sequence at end of string -- "... \\"');
         if (reA[1] !== 'u') { retS += escCodeTable[reA[1]] || reA[1] ; continue; }
         if (!eatRex(/^[0-9a-fA-F]{1,4}/)) throw new SyntaxError('Escape sequence \\u requires four trailing hexadecimal digits.');
@@ -38,7 +38,7 @@ var parseJSON = function(json) {
     if (token === '{') {                        //############ OBJECT LITERAL
       var retOb = {};
       while (src.length > 0) {
-        if (eatRex(/^(\s*\})/)) return retOb;
+        if (eatRex(/^\s*\}/)) return retOb;
         var key = nextLiteral();
         if (!isString(key)) throw new SyntaxError('Object key must be a string value -- string: anything');
         if (!eatRex(/^\s*:/)) throw new SyntaxError('Object literal requires colon between key and value -- key:value');
