@@ -6,14 +6,14 @@ var parseJSON = function(json) {
   var eatSrc = function(rex) { reA = rex.exec(src); if(reA){src=src.slice(reA[0].length)} return !!reA; };
   var nextLiteral = function() { // [Recursively] eats the leftmost [compound] literal value from `src`.
     token = eatSrc(/^\s*(([+-]?\d*\.?\d+([eE][-+]?\d+)?)|\w+|\"|\[|\{)/) && reA[1] || ''; // numeric or keyword or '"' or '[' or '{' or ''
-    if (/^[+-\d.]/.test(token)) return +token;  //############ NUMERIC LITERAL
-    if (/^\w/.test(token)) {                    //############ KEYWORD LITERAL
+    if (/^[+-\d.]/.test(token)) return +token;          //#### NUMERIC LITERAL
+    if (/^\w/.test(token)) {                            //#### KEYWORD LITERAL
       if (token === 'null') return null;
       if (token === 'true') return true;
       if (token === 'false') return false;
       throw new SyntaxError('Unknown keyword: '+token);
     }
-    if (token === '"') {                        //############ STRING LITERAL
+    if (token === '"') {                                //#### STRING LITERAL
       var retS = '';
       while (src.length > 0) {
         if (eatSrc(/^[^"\\]*/)) retS += reA[0];
@@ -26,7 +26,7 @@ var parseJSON = function(json) {
       }
       throw new SyntaxError('Unterminated string literal "...');
     }
-    if (token === '[') {                        //########## ARRAY LITERAL
+    if (token === '[') {                                //#### ARRAY LITERAL
       var retA = [];
       while (eatSrc(/^\s*/) , src.length > 0) {
         if (eatSrc(/^\]/)) return retA;
@@ -35,7 +35,7 @@ var parseJSON = function(json) {
       }
       throw new SyntaxError('Unterminated array literal [...');
     }
-    if (token === '{') {                        //############ OBJECT LITERAL
+    if (token === '{') {                                //#### OBJECT LITERAL
       var retOb = {};
       while (eatSrc(/^\s*/) , src.length > 0) {
         if (eatSrc(/^\}/)) return retOb;
