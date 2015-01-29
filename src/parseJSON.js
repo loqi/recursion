@@ -1,12 +1,12 @@
 var parseJSON = function(json) {
   var src = json; // nextLiteral() eats characters off the left side of src until it's exhausted.
   var escCodeTable = { 'b':'\b' , 'f':'\f' , 'n':'\n' , 'r':'\r' , 't':'\t' }; // \uHHHH is hardcoded.
-
+  var reA; // "regex exec array" holds the result from the most recent regex .exec()
   var isString = function(val) { return typeof val == 'string' || val instanceof String; };
-  var reA; // "regex exec array" Contains the result from the most recent regex .exec() call.
+  // loads regex exec to `reA` ; eats the match off of left of `xml`; returns boolean of hit:
   var eatSrc = function(rex) { reA = rex.exec(src); if(reA){src=src.slice(reA[0].length)} return !!reA; };
 
-  var nextLiteral = function() { // [Recursively] eats the leftmost [compound] literal value from `src`.
+  var nextLiteral = function() { // Recursively eats the leftmost [compound] literal value from `src`
     token = eatSrc(/^\s*(([+-]?\d*\.?\d+([eE][-+]?\d+)?)|\w+|\"|\[|\{)/) && reA[1] || ''; // numeric or keyword or '"' or '[' or '{' or ''
     if (/^[+-\d.]/.test(token)) return +token;          //#### NUMERIC LITERAL
     if (/^\w/.test(token)) {                            //#### KEYWORD LITERAL
@@ -42,7 +42,7 @@ var parseJSON = function(json) {
       while (eatSrc(/^\s*/) , src.length > 0) {
         if (eatSrc(/^\}/)) return retOb;         // If the next token is '}' we have reached the end of object literal
         var key = nextLiteral();                 // Assume the next item is a JSON string "..." literal to serve as a key
-        if (!isString(key)) throw new SyntaxError('Object key must be a string value -- string: anything');
+        if (!isString(key))   throw new SyntaxError('Object key must be a string value -- string: anything');
         if (!eatSrc(/^\s*:/)) throw new SyntaxError('Object literal requires colon between key and value -- key:value');
         retOb[key] = nextLiteral();              // Assume JSON literal of any kind as the value.
         eatSrc(/^\s*,/);                         // comma optional. Same rules as with array parsing.
