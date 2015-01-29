@@ -22,7 +22,7 @@ var parseJSON = function(json) {
         if (src.length < 1) break;              // If we reached EOS, it's an invalid string literal
         if (eatSrc(/^\"/)) return retS;         // If we reached " character, we have a complete string literal
         if (!eatSrc(/^\\(.)/)) throw new SyntaxError('Empty character escape sequence at end of string -- "... \\"');
-        if (reA[1] !== 'u') { retS += escCodeTable[reA[1]] || reA[1] ; continue; } // `\(non-'u')` : use the non-'u'
+        if (reA[1] !== 'u') { retS += escCodeTable[reA[1]] || reA[1] ; continue; } // `\(non-'u')` : use character as-is
         if (!eatSrc(/^[0-9a-fA-F]{1,4}/)) throw new SyntaxError('Escape sequence \\u requires four trailing hexadecimal digits.');
         retS += String.fromCharCode('0x'+reA[0]); // '0xHHHH' four hex digits append that actual character
       } // Passing this line means we ran out of JSON code before the next " character
