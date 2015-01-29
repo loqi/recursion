@@ -18,8 +18,8 @@ var parseJSON = function(json) {
     if (token === '"') {                                //#### STRING LITERAL
       var retS = '';
       while (src.length > 0) {
-        if (eatSrc(/^[^"\\]*/)) retS += reA[0]; // Eat until the first " or \ character or EOS
-        if (src.length < 1) break;              // If we reached EOS, it's an invalid string literal
+        if (eatSrc(/^[^"\\]*/)) retS += reA[0]; // Eat until the first " or \ character or end
+        if (src.length < 1) break;              // If we reached end, it's an invalid string literal
         if (eatSrc(/^\"/)) return retS;         // If we reached " character, we have a complete string literal
         if (!eatSrc(/^\\(.)/)) throw new SyntaxError('Empty character escape sequence at end of string -- "... \\"');
         if (reA[1] !== 'u') { retS += escCodeTable[reA[1]] || reA[1] ; continue; } // `\(non-'u')` : use character as-is
@@ -51,6 +51,6 @@ var parseJSON = function(json) {
     }
     throw new SyntaxError('Unknown JSON literal: '+token+src.slice(0,10));
   };
-
-  return (/^\s*$/.test(json)) ? void 0 : nextLiteral(); // JS value represented by the first JSON literal, ignoring leftovers.
+  // Return JS value represented by the first JSON literal, ignoring leftovers. All whitespace returns undefined.
+  return (/^\s*$/.test(json)) ? void 0 : nextLiteral();
 };
