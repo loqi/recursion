@@ -3,7 +3,7 @@ var parseJSON = function(json) {
   var escCodeTable = { 'b':'\b' , 'f':'\f' , 'n':'\n' , 'r':'\r' , 't':'\t' }; // \uHHHH is hardcoded.
   var reA; // "regex exec array" holds the result from the most recent regex .exec()
   var isString = function(val) { return typeof val == 'string' || val instanceof String; };
-  // loads regex exec to `reA` ; eats the match off of left of `xml`; returns boolean of hit:
+  // loads regex exec to `reA` ; eats the match off of left of `src`; returns boolean of hit:
   var eatSrc = function(rex) { reA = rex.exec(src); if(reA){src=src.slice(reA[0].length)} return !!reA; };
 
   var nextLiteral = function() { // Recursively eats the leftmost [compound] literal value from `src`
